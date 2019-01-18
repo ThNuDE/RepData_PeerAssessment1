@@ -1,0 +1,94 @@
+---
+title: "Rep Res. document"
+output:
+  output: html_document
+  keep_md: true
+  ---
+
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+
+_______________________
+
+loading the data
+
+```{r loading data}
+myurl<- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+download.file(myurl, paste(getwd(), "data.zip", sep = "/"))
+unzip("data.zip")
+activity<- read.csv("activity.csv")
+```
+
+Processing the data for first question
+
+```{r download package}
+library(ggplot2)
+library(dplyr)
+t1<- aggregate(steps~date, activity, sum)
+```
+
+Histogram of the total number of steps taken each day
+
+```{r histogram}
+g<- ggplot(t1, aes(t1$steps))
+g+geom_histogram(fill="blue", color= "white")+ labs(x = "steps/day", y= "count")+theme_bw()
+```
+
+Mean and median number of steps taken each day
+
+```{r mean}
+mean(t1$steps)
+```
+
+Median
+
+```{r median}
+median(t1$steps)
+```
+
+Time series plot of the average number of steps taken
+
+```{r avg steps}
+t2<- aggregate(steps~interval, activity, mean)
+g1<- ggplot(t2, aes(interval, steps))
+g1+geom_line(color ="blue")
+```
+
+The 5-minute interval that, on average, contains the maximum number of steps
+
+```{r max steps}
+t2$interval[which(max(t2$steps)== t2$steps)]
+sum(is.na(activity$steps))
+```
+
+Code to describe and show a strategy for imputing missing data:-
+
+The missing date is being imputed by avg. number of steps for that interval. For that a new merged data set is created and a for loop used to impute the data.
+
+```{r imputing data}
+t2<- rename(t2, "avgsteps" = "steps")
+activitynew<- merge(activity, t2, all = TRUE)
+for (i in 1:length(activitynew$steps)) {
+  if (is.na(activitynew$steps)[i]== TRUE) {
+    activitynew$steps[i]<- activitynew$avgsteps[i]
+    i= i+1
+  } else {i = i+1}}
+```
+
+Histogram of the total number of steps taken each day after missing values are imputed
+
+```{r hist total steps}
+t1<- aggregate(steps~date, activitynew, sum)
+g<- ggplot(t1, aes(t1$steps))
+g+geom_histogram(fill="blue", color= "white")+ labs(x = "steps/day", y= "count")+theme_bw()
+```
+
+Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+```{r weekdays}
+activitynew$date<- as.Date(activitynew$date, "%Y-%m-%d")
+activitynew$Week<- ifelse(weekdays(activitynew$date)== "Sunday"|weekdays(activitynew$date)== "Saturday", "weekend", "weekday")
+t3<-aggregate(steps~interval+Week, activitynew, mean)
+g1<- ggplot(t3, aes(interval, steps))
+g1+geom_line()+facet_grid(Week~.)
+```
