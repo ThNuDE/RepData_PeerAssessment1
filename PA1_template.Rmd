@@ -1,25 +1,140 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title:   "Reproducible Research: Peer Assessment 1"
+author:  "Thomas Nüßlein"
+output:  html_document
 ---
 
 
-## Loading and preprocessing the data
+## 1.Code for reading in the dataset and/or processing the data
+1. Reading the unzipped archive file 'activity.csv'  
+2. Loading library ggplot2
+3. Display data head
+4. Changing date string to date class
+5. Display data dimension
+6. Display data summary
+
+```{r, echo = TRUE}
+Sys.setenv(LANG = "en")
+Sys.setlocale("LC_ALL","English")
+
+# reading data
+activity <- read.csv("activity.csv")
+
+# libraries
+library(ggplot2)
+
+# Display data head
+head(activity)
+
+# Changing date string to date class
+activity$date <- as.POSIXct(activity$date, format="%Y-%m-%d")
+
+# display dimension
+dim(activity)
+
+# diplay summary
+summary(activity)
+```
+
+### 2.Histogram of the total number of steps taken each day
+
+```{r, echo = TRUE}
+steps_day <- aggregate(steps ~ date, rm.na = TRUE, data = activity, FUN = sum)
+plot(steps_day, type = "h", lwd = 10, lend = "square")
+
+ggplot(data = steps_day, aes(x = date, y = steps)) +
+  geom_line() +
+  geom_point() +
+  xlab("Date") +
+  ylab("Steps") +
+  ggtitle("Histogram of steps per day") +
+  theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
+        axis.title.x = element_text(color="blue", size=14, face="bold"),
+        axis.title.y = element_text(color="#993333", size=14, face="bold"))
+```
 
 
+## 3. Mean and median number of steps taken each day
+```{r, echo=TRUE}
+   rmean <- mean(steps_day$steps, na.rm=TRUE)
+   rmedian <- median(steps_day$steps, na.rm=TRUE)
+```   
+The `mean` is `r rmean` and the `median` is `r rmedian`.
 
-## What is mean total number of steps taken per day?
+## 4. Time series plot of the average number of steps taken
+```{r, echo=TRUE}
+   StepsByInterval <- aggregate(steps ~ interval, rm.na = TRUE, data = activity, FUN = mean)
+   plot(StepsByInterval, type = "l", col="darkblue", lwd = 2, xlab="Interval", ylab="Average number of steps", main="Average number of steps per     intervals")
+```
+
+## 5.The 5-minute interval that, on average, contains the maximum number of steps
+```{r, echo=TRUE}
+row <- which.max(StepsByInterval$steps)   
+max_interval <- StepsByInterval[which.max(StepsByInterval$steps),1]
+maxSteps <- max(StepsByInterval$steps, na.rm = TRUE)
+```
+Row: `r row`.
+Max Interval: `r max_interval`.
+Max Steps: `r maxSteps`.
+
+## 6.Code to describe and show a strategy for imputing missing data
+Count the number of days/intervals with missing values (NA).   
+  
+```{r, echo=TRUE}
+missing_values = sum(is.na(activity$steps))
+```
+Calculated number of missing values: `r missing_values`
+  
+Strategy: Create a new dataset and substitute each NA with the overall mean of the variable activity$steps.  
+```{r, echo=TRUE}
+activity_new <- activity
+activity_new$steps[is.na(activity_new$steps)] <- mean(na.omit(activity$steps))
+steps_day_new <- aggregate(steps ~ date, rm.na = TRUE, data = activity, FUN = sum)
+```   
 
 
+## 7.Histogram of the total number of steps taken each day after missing values are imputed
+```{r, echo=TRUE}
+ggplot(data = steps_day_new, aes(x = date, y = steps)) +
+  geom_line() +
+  geom_point() +
+  xlab("Date") +
+  ylab("Steps") +
+  ggtitle("Histogram of steps per day") +
+  theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
+        axis.title.x = element_text(color="blue", size=14, face="bold"),
+        axis.title.y = element_text(color="#993333", size=14, face="bold"))
 
-## What is the average daily activity pattern?
+rmean_new <- mean(steps_day_new$steps, na.rm=TRUE)
+rmedian_new <- median(steps_day_new$steps, na.rm=TRUE)
+```   
+
+The mean without NAs is `r rmean_new` and the median without NAs is `r rmedian_new`.
 
 
+##8.Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
 
-## Imputing missing values
+```{r, echo=TRUE}
+# create a new variable with weekdays name
+activity_new$day_name <- weekdays(activity_new$date)
+# create a new variable indicating weekday or weekend
+activity_new$day_type <- ifelse(activity_new$day_name=='Saturday' | activity_new$day_name=='Sunday', 'weekend','weekday')
+# check the first 10 values
+head(activity_new, n=10)
+```   
 
+Draw the plot  
 
+```{r, echo=TRUE}
+steps_day_new <- aggregate(steps~interval+day_type, data=activity_new, FUN=mean, na.action=na.omit)
 
-## Are there differences in activity patterns between weekdays and weekends?
+ggplot(steps_day_new, aes(x = interval, y = steps)) +
+  geom_line() +
+  ggtitle("Average steps per time interval: weekdays/weekends") +
+  xlab("Time") +
+  ylab("Steps") +
+  facet_grid(day_type ~ .) +
+  theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
+        axis.title.x = element_text(color="blue", size=14, face="bold"),
+        axis.title.y = element_text(color="#993333", size=14, face="bold"))
+```   
