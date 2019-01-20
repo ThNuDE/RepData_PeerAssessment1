@@ -31,7 +31,27 @@ activity <- read.csv("activity.csv")
 
 # libraries
 library(ggplot2)
+library(dplyr)
+```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 # Display data head
 head(activity)
 ```

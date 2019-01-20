@@ -24,6 +24,7 @@ activity <- read.csv("activity.csv")
 
 # libraries
 library(ggplot2)
+library(dplyr)
 
 # Display data head
 head(activity)
