@@ -81,7 +81,7 @@ summary(activity)
 
 ```r
 steps_day <- aggregate(steps ~ date, rm.na = TRUE, data = activity, FUN = sum)
-plot(steps_day, type = "h", lwd = 10, lend = "square")
+g <- plot(steps_day, type = "h", lwd = 10, lend = "square")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -100,6 +100,12 @@ ggplot(data = steps_day, aes(x = date, y = steps)) +
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-2.png)<!-- -->
 
+```r
+knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-2-2.png")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-2.png)<!-- -->
+
 
 ## 3. Mean and median number of steps taken each day
 
@@ -114,6 +120,12 @@ The `mean` is 1.0767189\times 10^{4} and the `median` is 10766.
 ```r
    StepsByInterval <- aggregate(steps ~ interval, rm.na = TRUE, data = activity, FUN = mean)
    plot(StepsByInterval, type = "l", col="darkblue", lwd = 2, xlab="Interval", ylab="Average number of steps", main="Average number of steps per     intervals")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
+   knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-4-1.png")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
@@ -159,6 +171,12 @@ ggplot(data = steps_day_new, aes(x = date, y = steps)) +
   theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
         axis.title.x = element_text(color="blue", size=14, face="bold"),
         axis.title.y = element_text(color="#993333", size=14, face="bold"))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+```r
+ knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-8-1.png")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
@@ -212,6 +230,12 @@ ggplot(steps_day_new, aes(x = interval, y = steps)) +
   theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
         axis.title.x = element_text(color="blue", size=14, face="bold"),
         axis.title.y = element_text(color="#993333", size=14, face="bold"))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+```r
+   knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-10-1.png")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->

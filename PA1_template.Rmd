@@ -44,7 +44,7 @@ summary(activity)
 
 ```{r, echo = TRUE}
 steps_day <- aggregate(steps ~ date, rm.na = TRUE, data = activity, FUN = sum)
-plot(steps_day, type = "h", lwd = 10, lend = "square")
+g <- plot(steps_day, type = "h", lwd = 10, lend = "square")
 
 ggplot(data = steps_day, aes(x = date, y = steps)) +
   geom_line() +
@@ -55,6 +55,8 @@ ggplot(data = steps_day, aes(x = date, y = steps)) +
   theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
         axis.title.x = element_text(color="blue", size=14, face="bold"),
         axis.title.y = element_text(color="#993333", size=14, face="bold"))
+
+knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-2-2.png")
 ```
 
 
@@ -69,6 +71,8 @@ The `mean` is `r rmean` and the `median` is `r rmedian`.
 ```{r, echo=TRUE}
    StepsByInterval <- aggregate(steps ~ interval, rm.na = TRUE, data = activity, FUN = mean)
    plot(StepsByInterval, type = "l", col="darkblue", lwd = 2, xlab="Interval", ylab="Average number of steps", main="Average number of steps per     intervals")
+
+   knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-4-1.png")
 ```
 
 ## 5.The 5-minute interval that, on average, contains the maximum number of steps
@@ -109,6 +113,8 @@ ggplot(data = steps_day_new, aes(x = date, y = steps)) +
         axis.title.x = element_text(color="blue", size=14, face="bold"),
         axis.title.y = element_text(color="#993333", size=14, face="bold"))
 
+ knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-8-1.png")
+
 rmean_new <- mean(steps_day_new$steps, na.rm=TRUE)
 rmedian_new <- median(steps_day_new$steps, na.rm=TRUE)
 ```   
@@ -141,4 +147,5 @@ ggplot(steps_day_new, aes(x = interval, y = steps)) +
   theme(plot.title = element_text(color="red", size=14, face="bold.italic", hjust = 0.5),
         axis.title.x = element_text(color="blue", size=14, face="bold"),
         axis.title.y = element_text(color="#993333", size=14, face="bold"))
+   knitr::include_graphics("PA1_template_files/figure-html/unnamed-chunk-10-1.png")
 ```   
